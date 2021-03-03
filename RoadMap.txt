@@ -1,0 +1,11 @@
+
+Create Repo
+    (config GitActions??)
+
+Create ReadMe file
+
+# User Stories
+
+Parse Stories into tasks
+
+
