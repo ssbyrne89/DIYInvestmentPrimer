@@ -1,11 +1,34 @@
 
-Create Repo
-    (config GitActions??)
+    Create Repo
+        (config GitActions??)
 
-Create ReadMe file
+    Create ReadMe file
 
-# User Stories
+    # User Stories
 
-Parse Stories into tasks
+    Parse Stories into tasks
 
+
+
+Prototyping our MVP locally
+
+    Create the database table model -- S.B.
+
+    Create a SQLite database for the initial prototyping  -- Pair Programming
+
+    #Design the the graph/table for `best dividend growth companies on the S&P500`
+        Take photo of example graph drawing and put it into the repo for reference -- S.B.
+        
+
+    write the queries for to produce the `best dividend growth companies on the S&P500` -- E.G.
+
+    Put into a pandas dataframe Plot the results of the above query --E.G. with some Pair Programming
+
+    Embed the data visualization of the graph as Plotly embedding on the HTML template -- S.B.
+
+Deployment
+
+    Migrate data to Postgres AWS
+
+    host on AWS via elastic beanstalk
 
