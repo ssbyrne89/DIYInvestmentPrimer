@@ -2,6 +2,8 @@
 
 from flask import Blueprint, jsonify, request, render_template #, flash, redirect
 
+from web_app.models import db, Month_Summary
+
 company_routes = Blueprint("company_routes", __name__)
 
 @company_routes.route("/companies.json")
@@ -12,6 +14,10 @@ def list_companies():
         {"id": 3, "title": "Company 3"},
     ]
     return jsonify(companies)
+
+    month_summary = Month_Summary(title=request.form["title"], author_id=request.form["author_name"])
+    db.session.add(new_book)
+    db.session.commit()
 
 @company_routes.route("/companies")
 def list_companies_for_humans():

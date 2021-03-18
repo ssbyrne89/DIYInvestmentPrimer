@@ -12,7 +12,7 @@
 
 Prototyping our MVP locally
 
-    Create the database table model -- S.B.
+    #Create the database table model -- S.B.
 
     Create a SQLite database for the initial prototyping  -- Pair Programming
 

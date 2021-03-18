@@ -7,7 +7,7 @@ db = SQLAlchemy()
 
 migrate = Migrate()
 
-class Companies(db.Model):
+class Month_Summary(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Open_Price = db.Column(db.Float)
     High = db.Column(db.Float)
