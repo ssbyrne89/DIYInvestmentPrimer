@@ -19,7 +19,7 @@ class Month_Summary(db.Model):
     Year = db.Column(db.Integer)
     Month = db.Column(db.Integer)
     Company_Name = db.Column(db.String(128))
-    Company_ticker = db.Column(db.String(128))
+    Company_Ticker = db.Column(db.String(128))
 
     #def __repr__(self):
     #    return f"<Book {self.id} {self.title}>"

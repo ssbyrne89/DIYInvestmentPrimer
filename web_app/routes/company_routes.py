@@ -8,12 +8,12 @@ company_routes = Blueprint("company_routes", __name__)
 
 @company_routes.route("/companies.json")
 def list_companies():
-    companies = [
+    """companies = [
         {"id": 1, "title": "Company 1"},
         {"id": 2, "title": "Company 2"},
         {"id": 3, "title": "Company 3"},
     ]
-    return jsonify(companies)
+    return jsonify(companies)"""
 
     month_summary = Month_Summary(title=request.form["title"], author_id=request.form["author_name"])
     db.session.add(new_book)
