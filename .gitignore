@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# ignore dev database stuff:
+
+migrations
+*.db
+
 # C extensions
 *.so
 

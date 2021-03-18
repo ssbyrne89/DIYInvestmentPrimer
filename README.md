@@ -37,3 +37,15 @@ to run the app locally go to your terminal and in the web_app folder:
 # Windows:
 `export FLASK_APP=web_app` # one-time thing, to set the env var
 `flask run`
+
+to migrate the Database:
+
+use the relative file path
+
+then, run the following commands:
+
+`FLASK_APP=web_app flask db init`
+
+the following two commands also need to be run when updating the DB schema
+`FLASK_APP=web_app flask db migrate`
+`FLASK_APP=web_app flask db upgrade`
