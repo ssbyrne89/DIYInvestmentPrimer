@@ -31,7 +31,9 @@ def parseDataFromAlphaVAPI():
   # it runs only once!
 
 
-  SandP500 = pd.read_csv('/Users/kellycho/Desktop/Repos/DIYInvestmentPrimer/SandP_500_companies.csv')
+  # SandP500 = pd.read_csv('/Users/kellycho/Desktop/Repos/DIYInvestmentPrimer/SandP_500_companies.csv')
+  SandP500 = pd.read_csv('../DIYInvestmentPrimer/SandP_500_companies.csv')
+
   trimmedSP500 = SandP500[['Symbol', 'Security', 'Date first added']]
 
   allCompany_df = pd.DataFrame([[0, 0, 0, 0,0,0, 0, "0", "0", 0, 0]],
