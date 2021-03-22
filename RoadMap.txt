@@ -16,12 +16,13 @@ Prototyping our MVP locally
 
     Create a DOTENV file for environment variables to keep api keys guarded -- S.B.
 
-    Integrate AlphaVantage API call function in the `database.py` file 
-    with the rest of the app
+    #Create a SQLite database for the initial prototyping  -- Pair Programming
+    
+    Migrate AlphaVantage API call function from Notebook to  the `database.py` file 
+    with the rest of the app - Pair Programming
 
-    Populate the table --Pair Programming
+    Populate the table -- Pair Programming
 
-    Create a SQLite database for the initial prototyping  -- Pair Programming
 
     ###Design the the graph/table for `best dividend growth companies on the S&P500`
         #Take photo of example graph drawing and put it into the repo for reference -- S.B.
