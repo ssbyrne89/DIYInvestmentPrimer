@@ -41,7 +41,7 @@ def parseDataFromAlphaVAPI():
                                           '6. volume', '7. dividend amount', 'Company_Ticker', 'Company_name', 'month', 'year'])
   i = 0
   #for symbol in chunker(lstOFa, 1):
-  for symbol in trimmedSP500["Symbol"][0:5]:
+  for symbol in trimmedSP500["Symbol"][0:250]:
     div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
 
   
