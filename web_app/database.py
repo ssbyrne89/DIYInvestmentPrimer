@@ -1,6 +1,13 @@
 from sqlalchemy import create_engine
-from web_app.__init__ import DATABASE_URI
+# from web_app.__init__ import DATABASE_URI
 import pandas as pd
+import json
+import requests
+
+from time import sleep
+
+
+DATABASE_URI = "sqlite:///DIY_Investment_Primer_dev_DB.db"
 
 engine = create_engine(DATABASE_URI, echo=False)
 sqlite_connection = engine.connect()
@@ -11,6 +18,21 @@ sqlite_connection = engine.connect()
 
 
 
+def populateDB():
+
+  if dbExists():
+    print("monthly dividend summary already exists!")
+    return
+
+  df = parseDataFromAlphaVAPI()
+  sqlite_table = "month_summary"
+  try:
+    df.to_sql(sqlite_table,sqlite_connection, if_exists='fail' )
+  except:
+    print("monthly dividend summary already exists!")
+    pass
+      
+  sqlite_connection.close()
 
 def parseDataFromAlphaVAPI():
 
@@ -18,15 +40,15 @@ def parseDataFromAlphaVAPI():
   # it runs only once!
 
 
-  SandP500 = pd.read_csv('/Users/kellycho/Desktop/Repos/DIYInvestmentPrimer/SandP_500_companies.csv')
+  SandP500 = pd.read_csv('../DIYInvestmentPrimer/SandP_500_companies.csv')
   trimmedSP500 = SandP500[['Symbol', 'Security', 'Date first added']]
 
   allCompany_df = pd.DataFrame([[0, 0, 0, 0,0,0, 0, "0", "0", 0, 0]],
                                 columns=['1. open', '2. high', '3. low', '4. close', '5. adjusted close',
-                                          '6. volume', '7. dividend amount', 'Company_Ticker', 'Company_name', 'month', 'year'])
-  i = 1
+                                          '6. volume', '7. dividend amount', 'Company_Ticker', 'Company_Name', 'month', 'year'])
+  i = 0
   #for symbol in chunker(lstOFa, 1):
-  for symbol in trimmedSP500["Symbol"][0:3]:
+  for symbol in trimmedSP500["Symbol"][:3]:
     div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
 
   
@@ -38,8 +60,8 @@ def parseDataFromAlphaVAPI():
     date_cols = list(div_dates[1][1].keys())"""
     
     monthly_time_series_df = pd.DataFrame.from_dict(parsed_divs['Monthly Adjusted Time Series'], orient ='index')
-    monthly_time_series_df['Company_ticker'] = symbol
-    monthly_time_series_df['Company_name'] = trimmedSP500['Security'][i]
+    monthly_time_series_df['Company_Ticker'] = symbol
+    monthly_time_series_df['Company_Name'] = trimmedSP500['Security'][i]
     monthly_time_series_df['month'] = pd.DatetimeIndex(monthly_time_series_df.index).month
     monthly_time_series_df['year'] = pd.DatetimeIndex(monthly_time_series_df.index).year
     monthly_time_series_df.reset_index(drop=True, inplace=True)
@@ -53,17 +75,21 @@ def parseDataFromAlphaVAPI():
       sleep(65)
     i += 1
   
-  allCompany_df
+  return allCompany_df
 
-def populateDB():
-  df = parseDataFromAlphaVAPI()
-  sqlite_table = "month_summary"
-  df.to_sql(sqlite_table,sqlite_connection, if_exists='replace' )
+def dbExists():
+  result = sqlite_connection.execute(''' 
+  SELECT count(name) 
+  FROM sqlite_master
+  WHERE type='table' AND name='month_summary' 
+  ''')
+  for row in result:
+      return row[0]==1
+  
   sqlite_connection.close()
 
 
 
 def updateDatabase():
   # this function does a monthly update of the db
-
   pass
