@@ -23,6 +23,7 @@ Prototyping our MVP locally
 
     Populate the table -- Pair Programming
 
+    add all the companies in the SP500 to the DB
 
     ###Design the the graph/table for `best dividend growth companies on the S&P500`
         #Take photo of example graph drawing and put it into the repo for reference -- S.B.
