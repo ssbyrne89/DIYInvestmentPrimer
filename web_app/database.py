@@ -3,9 +3,11 @@ from sqlalchemy import create_engine
 import pandas as pd
 import json
 import requests
-
+import os
+from dotenv import load_dotenv
 from time import sleep
 
+load_dotenv()
 
 DATABASE_URI = "sqlite:///DIY_Investment_Primer_dev_DB.db"
 
@@ -48,10 +50,15 @@ def parseDataFromAlphaVAPI():
                                           '6. volume', '7. dividend amount', 'Company_Ticker', 'Company_Name', 'month', 'year'])
   i = 0
   #for symbol in chunker(lstOFa, 1):
-  for symbol in trimmedSP500["Symbol"][:3]:
-    div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
+  for symbol in trimmedSP500["Symbol"][:]:
 
-  
+    if i <= 250:
+      APIKEY = os.getenv("APIKEY1")
+    else:
+      APIKEY = os.getenv("APIKEY2")
+
+    div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
+
     parsed_divs = json.loads(requests.get(div_monthly_summary).text) 
   
     ### make a row for each date in the 'Monthly Adjusted Time Series' with the
