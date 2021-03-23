@@ -18,6 +18,21 @@ sqlite_connection = engine.connect()
 
 
 
+def populateDB():
+
+  if dbExists():
+    print("monthly dividend summary already exists!")
+    return
+
+  df = parseDataFromAlphaVAPI()
+  sqlite_table = "month_summary"
+  try:
+    df.to_sql(sqlite_table,sqlite_connection, if_exists='fail' )
+  except:
+    print("monthly dividend summary already exists!")
+    pass
+      
+  sqlite_connection.close()
 
 def parseDataFromAlphaVAPI():
 
@@ -25,7 +40,7 @@ def parseDataFromAlphaVAPI():
   # it runs only once!
 
 
-  SandP500 = pd.read_csv('/Users/kellycho/Desktop/Repos/DIYInvestmentPrimer/SandP_500_companies.csv')
+  SandP500 = pd.read_csv('../DIYInvestmentPrimer/SandP_500_companies.csv')
   trimmedSP500 = SandP500[['Symbol', 'Security', 'Date first added']]
 
   allCompany_df = pd.DataFrame([[0, 0, 0, 0,0,0, 0, "0", "0", 0, 0]],
@@ -33,7 +48,7 @@ def parseDataFromAlphaVAPI():
                                           '6. volume', '7. dividend amount', 'Company_Ticker', 'Company_Name', 'month', 'year'])
   i = 0
   #for symbol in chunker(lstOFa, 1):
-  for symbol in trimmedSP500["Symbol"][:]:
+  for symbol in trimmedSP500["Symbol"][:3]:
     div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
 
   
@@ -62,35 +77,15 @@ def parseDataFromAlphaVAPI():
   
   return allCompany_df
 
-def populateDB():
-
- 
-  
+def dbExists():
   result = sqlite_connection.execute(''' 
   SELECT count(name) 
   FROM sqlite_master
   WHERE type='table' AND name='month_summary' 
   ''')
-  
   for row in result:
-    if row[0]==1:
-      #update DB if already exist.
-      return
+      return row[0]==1
   
-
-  df = parseDataFromAlphaVAPI()
-  sqlite_table = "month_summary"
-  try:
-    df.to_sql(sqlite_table,sqlite_connection, if_exists='fail' )
-  except:
-    print("monthly dividend summary already exists!")
-    pass
-      
-  # if result.fetchone[0]==1:
-  #   { print('Table exists.')}
-  # print(result)
-  
-
   sqlite_connection.close()
 
 
