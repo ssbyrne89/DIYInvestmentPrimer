@@ -24,6 +24,19 @@ Prototyping our MVP locally
     Populate the table -- Pair Programming
        ###rewrite `parseDataFromAlphaVAPI()` to use two keys
        add something that will log the API calls per key
+
+    ### if api call returns the following message: {
+    "Note": "Thank you for using Alpha Vantage! 
+     Our standard API call frequency is 5 calls per
+     minute and 500 calls per day. Please visit 
+     https://www.alphavantage.co/premium/ if you would 
+     like to target a higher API call frequency."
+     }
+     this is the message given when too many api calls have been
+     made in a minute or a day
+     if this message is returned then set the sleep() to pause
+     looping for 65 seconds and start at the top of the loop with
+     the value of `i` most recently used to make an api call
     
     rewrite `parse` and `populate` functions to commit to the DB every ten companies -- E.G.
     
