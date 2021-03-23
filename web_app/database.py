@@ -57,11 +57,16 @@ def parseDataFromAlphaVAPI():
   startDFIndex = 1
   
   #for symbol in chunker(lstOFa, 1):
-  for symbol in trimmedSP500["Symbol"][:16]:
+  for symbol in trimmedSP500["Symbol"][i]:
 
-    if i <= 250:
+    if i % 2 == 0:
+      print("APIKEY1")
+      print(i)
       APIKEY = os.getenv("APIKEY1")
-    else:
+      
+    if i % 2 != 0:
+      print(i)
+      print("APIKEY2")
       APIKEY = os.getenv("APIKEY2")
 
     div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
@@ -73,6 +78,12 @@ def parseDataFromAlphaVAPI():
     """div_dates = list(parsed_divs.items())
     date_cols = list(div_dates[1][1].keys())"""
     
+    
+    error = 'Thank you for using Alpha Vantage! Our standard API call frequency is 5 calls per minute and 500 calls per day. Please visit https://www.alphavantage.co/premium/ if you would like to target a higher API call frequency.'
+    if error == parsed_divs.get('Note'):
+      sleep(65)
+      continue
+
     monthly_time_series_df = pd.DataFrame.from_dict(parsed_divs['Monthly Adjusted Time Series'], orient ='index')
     monthly_time_series_df['Company_Ticker'] = symbol
     monthly_time_series_df['Company_Name'] = trimmedSP500['Security'][i]
@@ -86,7 +97,7 @@ def parseDataFromAlphaVAPI():
 
     
     x = i % 5
-    if x == 0:
+    if x == 0 and i != 0:
       # at this point the df has 5 companies worth of data
       # I can populate for these companies with append, 
       # then continue loop
