@@ -82,18 +82,18 @@ def parseDataFromAlphaVAPI():
   
   #for symbol in chunker(lstOFa, 1):
 
-  for symbol in trimmedSP500["Symbol"][:3]:
+  for symbol in trimmedSP500["Symbol"][:]:
 
     logKey = 0
-    # if i <= 5:
-    #   APIKEY = os.getenv("APIKEY1")
-    #   logKey = 1
-    # else:
-    #   APIKEY = os.getenv("APIKEY2")
-    #   logKey = 2
+    if (i <= 60) or (i >= 121 and i <= 180) or (i >= 241 and i <= 300) or (i >= 421 and i <= 480):
+      APIKEY = os.getenv("APIKEY1")
+      logKey = 1
+    elif (i >= 61 and i <= 120) or (i >= 181 and i <= 240) or (i >= 361 and i <= 420) or (i >= 481):
+      APIKEY = os.getenv("APIKEY2")
+      logKey = 2
 
-    # div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
-    div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
+    div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
+    #div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
 
     logAPICall(symbol, datetime.now(), logKey)
 
@@ -102,19 +102,19 @@ def parseDataFromAlphaVAPI():
     parsed_divs = json.loads(requests.get(div_monthly_summary).text) 
   
     if 'Note' in parsed_divs:
+      print("THROTTLED!")
       sleep(65)
+      continue
+
+    if 'Error Message' in parsed_divs:
+      print("ERROR MESSAGE")
+      i += 1
       continue
     
     ### make a row for each date in the 'Monthly Adjusted Time Series' with the
     ### dividend amount as the entry
     """div_dates = list(parsed_divs.items())
     date_cols = list(div_dates[1][1].keys())"""
-    
-    
-    error = 'Thank you for using Alpha Vantage! Our standard API call frequency is 5 calls per minute and 500 calls per day. Please visit https://www.alphavantage.co/premium/ if you would like to target a higher API call frequency.'
-    if error == parsed_divs.get('Note'):
-      sleep(65)
-      continue
 
     monthly_time_series_df = pd.DataFrame.from_dict(parsed_divs['Monthly Adjusted Time Series'], orient ='index')
     monthly_time_series_df['Company_Ticker'] = symbol
