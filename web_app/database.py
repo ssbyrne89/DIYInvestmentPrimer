@@ -4,6 +4,9 @@ import pandas as pd
 import json
 import requests
 import os
+
+from datetime import datetime
+
 from dotenv import load_dotenv
 from time import sleep
 
@@ -13,12 +16,33 @@ DATABASE_URI = "sqlite:///DIY_Investment_Primer_dev_DB.db"
 
 engine = create_engine(DATABASE_URI, echo=False)
 sqlite_connection = engine.connect()
-### basic functionality has been worked
-### but still needs to be integrated with the rest of the app
-### add the chron so that it automatically updates the database monthly
+
+API_META_DATABASE_URI = "sqlite:///AlphaVApi_meta_DB.db"
+engine2 = create_engine(API_META_DATABASE_URI, echo=False)
 
 
+CREATE_API_META_TABLE = """
+CREATE TABLE IF NOT EXISTS api_call(
+    id INTEGER PRIMARY KEY,
+    company TEXT,
+    api_key_id INTEGER,
+    date REAL
+);
+"""
 
+INSERT_API_CALL = """
+INSERT INTO api_call (company, date, api_key_id)
+VALUES (?,?, ?);
+"""
+
+
+def createAPICallTable():
+  with engine2.connect() as conn:
+    conn.execute(CREATE_API_META_TABLE)
+
+def logAPICall(symbol, date, logKey):
+  with engine2.connect() as conn:
+    conn.execute(INSERT_API_CALL, symbol, date, logKey)
 
 def populateDB():
 
@@ -57,15 +81,21 @@ def parseDataFromAlphaVAPI():
   startDFIndex = 1
   
   #for symbol in chunker(lstOFa, 1):
-  for symbol in trimmedSP500["Symbol"][:16]:
+  for symbol in trimmedSP500["Symbol"][:3]:
 
-    if i <= 250:
-      APIKEY = os.getenv("APIKEY1")
-    else:
-      APIKEY = os.getenv("APIKEY2")
+    logKey = 0
+    # if i <= 5:
+    #   APIKEY = os.getenv("APIKEY1")
+    #   logKey = 1
+    # else:
+    #   APIKEY = os.getenv("APIKEY2")
+    #   logKey = 2
 
-    div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
-    # div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
+    # div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
+    div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
+
+    logAPICall(symbol, datetime.now(), logKey)
+
     parsed_divs = json.loads(requests.get(div_monthly_summary).text) 
   
     ### make a row for each date in the 'Monthly Adjusted Time Series' with the
@@ -85,7 +115,7 @@ def parseDataFromAlphaVAPI():
 
 
     
-    x = i % 5
+    x = i % 4
     if x == 0:
       # at this point the df has 5 companies worth of data
       # I can populate for these companies with append, 
@@ -102,7 +132,7 @@ def dbExists():
     result = sqlite_connection.execute(''' 
     SELECT count(name) 
     FROM sqlite_master
-    WHERE type='table' AND name='month_summary' 
+    WHERE type='table' AND name='month_summary'; 
     ''')
     for row in result:
         return row[0]==1

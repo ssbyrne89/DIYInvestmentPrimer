@@ -19,13 +19,13 @@ Prototyping our MVP locally
     #Create a SQLite database for the initial prototyping  -- Pair Programming
     
     ###Migrate AlphaVantage API call function from Notebook to  the `database.py` file 
-    with the rest of the app - Pair Programming
+        with the rest of the app - Pair Programming
 
     Populate the table -- Pair Programming
        ###rewrite `parseDataFromAlphaVAPI()` to use two keys
        add something that will log the API calls per key
     
-    rewrite `parse` and `populate` functions to commit to the DB every ten companies -- E.G.
+    #rewrite `parse` and `populate` functions to commit to the DB every ten companies -- E.G.
     
     move the `populateDB()` to the if __name__ = "main"???
     
