@@ -98,6 +98,10 @@ def parseDataFromAlphaVAPI():
 
     parsed_divs = json.loads(requests.get(div_monthly_summary).text) 
   
+    if 'Note' in parsed_divs:
+      sleep(65)
+      continue
+    
     ### make a row for each date in the 'Monthly Adjusted Time Series' with the
     ### dividend amount as the entry
     """div_dates = list(parsed_divs.items())
