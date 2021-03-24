@@ -128,13 +128,14 @@ def parseDataFromAlphaVAPI():
 
 
     
-      # at this point the df has 5 companies worth of data
-      # I can populate for these companies with append, 
-      # then continue loop
+    x = i % 4
+    if x == 0:
       appendDFtoDB(allCompany_df[startDFIndex:])
       startDFIndex = allCompany_df.shape[0]
       sleep(65)
     i += 1
+      
+
   appendDFtoDB(allCompany_df[startDFIndex:])
 
 def dbExists():
