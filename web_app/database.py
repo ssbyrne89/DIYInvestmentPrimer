@@ -67,8 +67,8 @@ def parseDataFromAlphaVAPI():
   trimmedSP500 = SandP500[['Symbol', 'Security', 'Date first added']]
 
   allCompany_df = pd.DataFrame([[0, 0, 0, 0,0,0, 0, "0", "0", 0, 0]],
-                                columns=['1. open', '2. high', '3. low', '4. close', '5. adjusted close',
-                                          '6. volume', '7. dividend amount', 'Company_Ticker', 'Company_Name', 'month', 'year'])
+                                columns=['open', 'high', 'low', 'close', 'adjusted_close',
+                                          'volume', 'dividend_amount', 'Company_Ticker', 'Company_Name', 'month', 'year'])
 
   i = 0
   startDFIndex = 1
@@ -106,6 +106,15 @@ def parseDataFromAlphaVAPI():
     
 
     monthly_time_series_df = pd.DataFrame.from_dict(parsed_divs['Monthly Adjusted Time Series'], orient ='index')
+    monthly_time_series_df = monthly_time_series_df.rename(columns={'1. open':'open',
+                                                                    '2. high': 'high',
+                                                                    '3. low': 'low',
+                                                                    '4. close': 'close',
+                                                                    '5. adjusted close': 'adjusted_close',
+                                                                    '6. volume': 'volume',
+                                                                    '7. dividend amount': 'dividend_amount'})
+
+
     monthly_time_series_df['Company_Ticker'] = symbol
     monthly_time_series_df['Company_Name'] = trimmedSP500['Security'][i]
     monthly_time_series_df['month'] = pd.DatetimeIndex(monthly_time_series_df.index).month
