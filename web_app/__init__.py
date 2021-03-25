@@ -12,7 +12,6 @@ from web_app.database import DATABASE_URI, parseDataFromAlphaVAPI, populateDB, \
 
 from sqlalchemy import create_engine
 
-createAPICallTable()
 
 
 # DATABASE_URI = "sqlite:///DIY_Investment_Primer_dev_DB.db" # using relative filepath
@@ -31,8 +30,9 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
-    populateDB()
     
+    populateDB()
+    createAPICallTable()
     
     app.register_blueprint(home_routes)
     app.register_blueprint(company_routes)

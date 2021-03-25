@@ -75,18 +75,18 @@ def parseDataFromAlphaVAPI():
   
   #for symbol in chunker(lstOFa, 1):
 
-  for symbol in trimmedSP500["Symbol"][:]:
+  for symbol in trimmedSP500["Symbol"][:3]:
 
     logKey = 0
-    if i <= 250:
-      APIKEY = os.getenv("APIKEY1")
-      logKey = 1
-    else:
-      APIKEY = os.getenv("APIKEY2")
-      logKey = 2
+    # if i <= 250:
+    #   APIKEY = os.getenv("APIKEY1")
+    #   logKey = 1
+    # else:
+    #   APIKEY = os.getenv("APIKEY2")
+    #   logKey = 2
 
-    div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
-    # div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
+    # div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
+    div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
 
     logAPICall(symbol, datetime.now(), logKey)
 
