@@ -51,14 +51,7 @@ def populateDB():
     return
 
   parseDataFromAlphaVAPI()
-  # sqlite_table = "month_summary"
-  # try:
-  #   df.to_sql(sqlite_table,sqlite_connection, if_exists='fail' )
-  # except:
-  #   print("monthly dividend summary already exists!")
-
-      
-  # sqlite_connection.close(df)
+  
 
 def appendDFtoDB(df):
 
@@ -150,6 +143,7 @@ def encounteredError(parsedDivs):
   if 'Note' in parsedDivs:
     print("THROTTLED!")
     sleep(65)
+    return False
 
   if 'Error Message' in parsedDivs:
     print("ERROR MESSAGE")
