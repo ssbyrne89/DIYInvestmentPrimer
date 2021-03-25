@@ -93,23 +93,19 @@ def parseDataFromAlphaVAPI():
       logKey = 2
 
     div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
-    #div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
+    # div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
 
     logAPICall(symbol, datetime.now(), logKey)
 
 
 
     parsed_divs = json.loads(requests.get(div_monthly_summary).text) 
-  
-    if 'Note' in parsed_divs:
-      print("THROTTLED!")
-      sleep(65)
-      continue
 
-    if 'Error Message' in parsed_divs:
-      print("ERROR MESSAGE")
+    if encounteredError(parsed_divs):
       i += 1
       continue
+    
+    
     
     ### make a row for each date in the 'Monthly Adjusted Time Series' with the
     ### dividend amount as the entry
@@ -128,7 +124,7 @@ def parseDataFromAlphaVAPI():
 
 
     
-    x = i % 4
+    x = i % 5
     if x == 0:
       appendDFtoDB(allCompany_df[startDFIndex:])
       startDFIndex = allCompany_df.shape[0]
@@ -150,8 +146,16 @@ def dbExists():
         return row[0]==1
   
   
+def encounteredError(parsedDivs):
+  if 'Note' in parsedDivs:
+    print("THROTTLED!")
+    sleep(65)
 
+  if 'Error Message' in parsedDivs:
+    print("ERROR MESSAGE")
+    return True
 
+  return False
 
 def updateDatabase():
   # this function does a monthly update of the db
