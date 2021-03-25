@@ -49,3 +49,13 @@ then, run the following commands:
 the following two commands also need to be run when updating the DB schema
 `FLASK_APP=web_app flask db migrate`
 `FLASK_APP=web_app flask db upgrade`
+
+to count how many calls have been made that day use the following query in SQL
+'''SELECT COUNT(*)
+FROM api_call
+WHERE date LIKE '? %' AND api_key_id = ?'''
+
+count how many unique have been added for that day
+SELECT COUNT(DISTINCT company)
+FROM api_call
+WHERE date LIKE '? %'
