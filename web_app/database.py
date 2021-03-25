@@ -46,9 +46,9 @@ def logAPICall(symbol, date, logKey):
 
 def populateDB():
 
-  if dbExists():
-    print("monthly dividend summary already exists!")
-    return
+  # if dbExists():
+  #   print("monthly dividend summary already exists!")
+  #   return
 
   parseDataFromAlphaVAPI()
   
@@ -75,7 +75,7 @@ def parseDataFromAlphaVAPI():
   
   #for symbol in chunker(lstOFa, 1):
 
-  for symbol in trimmedSP500["Symbol"][:3]:
+  for symbol in trimmedSP500["Symbol"][78:79]:
 
     logKey = 0
     # if i <= 250:
@@ -107,7 +107,7 @@ def parseDataFromAlphaVAPI():
 
     monthly_time_series_df = pd.DataFrame.from_dict(parsed_divs['Monthly Adjusted Time Series'], orient ='index')
     monthly_time_series_df['Company_Ticker'] = symbol
-    monthly_time_series_df['Company_Name'] = trimmedSP500['Security'][i]
+    monthly_time_series_df['Company_Name'] = trimmedSP500['Security'][78]
     monthly_time_series_df['month'] = pd.DatetimeIndex(monthly_time_series_df.index).month
     monthly_time_series_df['year'] = pd.DatetimeIndex(monthly_time_series_df.index).year
     monthly_time_series_df.reset_index(drop=True, inplace=True)
