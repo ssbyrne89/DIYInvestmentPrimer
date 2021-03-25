@@ -16,14 +16,15 @@ Prototyping our MVP locally
 
     ###Create a DOTENV file for environment variables to keep api keys guarded -- S.B.
 
-    #Create a SQLite database for the initial prototyping  -- Pair Programming
+    ###Create a SQLite database for the initial prototyping  -- Pair Programming
     
     ###Migrate AlphaVantage API call function from Notebook to  the `database.py` file 
-        with the rest of the app - Pair Programming
+    with the rest of the app - Pair Programming
 
-    Populate the table -- Pair Programming
+    ###Populate the table -- Pair Programming
        ###rewrite `parseDataFromAlphaVAPI()` to use two keys
-       add something that will log the API calls per key
+       ### add something that will log the API calls per key
+       
 
     ### if api call returns the following message: {
     "Note": "Thank you for using Alpha Vantage! 
@@ -38,16 +39,22 @@ Prototyping our MVP locally
      looping for 65 seconds and start at the top of the loop with
      the value of `i` most recently used to make an api call
     
-    #rewrite `parse` and `populate` functions to commit to the DB every ten companies -- E.G.
+    ###rewrite `parse` and `populate` functions to commit to the DB every ten companies -- E.G.
     
-    move the `populateDB()` to the if __name__ = "main"???
     
-    Add the chron so that it automatically updates the database monthly
 
     ###Design the the graph/table for `best dividend growth companies on the S&P500`
         #Take photo of example graph drawing and put it into the repo for reference -- S.B.
-        
+    
+    Refactor:
+        parseData.. function: Clean and simplify api-key selection 
+        encounteredError function: separate the "Note" handle into it's own function
+    
+    Change SandP500 csv - change ticker for BF.B to BF-B
 
+    move the `populateDB()` to the if __name__ = "main"???
+
+    Add the chron so that it automatically updates the database monthly
     write the queries for to produce the `best dividend growth companies on the S&P500` -- E.G.
 
     Put into a pandas dataframe Plot the results of the above query --E.G. with some Pair Programming
