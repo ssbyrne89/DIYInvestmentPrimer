@@ -46,9 +46,9 @@ def logAPICall(symbol, date, logKey):
 
 def populateDB():
 
-  # if dbExists():
-  #   print("monthly dividend summary already exists!")
-  #   return
+  if dbExists():
+    print("monthly dividend summary already exists!")
+    return
 
   parseDataFromAlphaVAPI()
   
@@ -75,18 +75,18 @@ def parseDataFromAlphaVAPI():
   
   #for symbol in chunker(lstOFa, 1):
 
-  for symbol in trimmedSP500["Symbol"][78:79]:
+  for symbol in trimmedSP500["Symbol"][:]:
 
     logKey = 0
-    # if i <= 250:
-    #   APIKEY = os.getenv("APIKEY1")
-    #   logKey = 1
-    # else:
-    #   APIKEY = os.getenv("APIKEY2")
-    #   logKey = 2
+    if i <= 250:
+      APIKEY = os.getenv("APIKEY1")
+      logKey = 1
+    else:
+      APIKEY = os.getenv("APIKEY2")
+      logKey = 2
 
-    # div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
-    div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
+    div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
+    # div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
 
     logAPICall(symbol, datetime.now(), logKey)
 
@@ -107,7 +107,7 @@ def parseDataFromAlphaVAPI():
 
     monthly_time_series_df = pd.DataFrame.from_dict(parsed_divs['Monthly Adjusted Time Series'], orient ='index')
     monthly_time_series_df['Company_Ticker'] = symbol
-    monthly_time_series_df['Company_Name'] = trimmedSP500['Security'][78]
+    monthly_time_series_df['Company_Name'] = trimmedSP500['Security'][i]
     monthly_time_series_df['month'] = pd.DatetimeIndex(monthly_time_series_df.index).month
     monthly_time_series_df['year'] = pd.DatetimeIndex(monthly_time_series_df.index).year
     monthly_time_series_df.reset_index(drop=True, inplace=True)
