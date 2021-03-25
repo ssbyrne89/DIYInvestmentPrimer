@@ -5,13 +5,20 @@ Sue - has a wealth manager, but wants more info for dealing with them.
 
 
 
-Tom - wants to easily find out which stocks pay dividends, in order to make a good decision about investing.
+Tom - 9-5 guy
+    - wants to easily find out which stocks pay dividends, in order to make a good decision about investing.
     - he wants to get some basic definitions about stock investment terminology. 
     - want additional resources to further his knowledge 
     - Example portfolio template
     - Porfolio "builder": a way to construct a portfolio that reaches a monthly payout goal. 
     - wants to learn about stocks in a fun way by filtering based on industries that he has an interest
+    - he doesn't have much extra money to invest and wants to get the most bang for his buck so
+            he would benefit from a chart that shows "DIVIDEND YIELD"
     in i.e. He is poker enthusiast and so is able to view a Gaming/Gambling Industry index. 
+
+James   - like Tom
+        - but more like the "money twitter" crowd
+        - a financial 'hussla' but no formal knowledge
 
 Sue - wants to create a "watch" porfolio where she can track dividend paying stocks on a year long
     timeline.  How much they pay out, and when they pay out?

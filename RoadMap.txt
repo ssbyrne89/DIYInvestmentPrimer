@@ -46,6 +46,8 @@ Prototyping our MVP locally
     ###Design the the graph/table for `best dividend growth companies on the S&P500`
         #Take photo of example graph drawing and put it into the repo for reference -- S.B.
     
+
+
     Refactor:
         parseData.. function: Clean and simplify api-key selection 
         encounteredError function: separate the "Note" handle into it's own function
@@ -55,11 +57,32 @@ Prototyping our MVP locally
     move the `populateDB()` to the if __name__ = "main"???
 
     Add the chron so that it automatically updates the database monthly
-    write the queries for to produce the `best dividend growth companies on the S&P500` -- E.G.
+    write the queries -- E.G.
+        wants to easily find out which stocks pay dividends, in order to make a good decision about investing
+        query that returns the DIVIDEND YIELD
 
+ANALYSIS
     Put into a pandas dataframe Plot the results of the above query --E.G. with some Pair Programming
 
+    Create create visualization:
+        DIVIDEND YIELD chart
+        "top 20 companies with best dividend yield" CHART NAME
+
+
+FRONTEND
     Embed the data visualization of the graph as Plotly embedding on the HTML template -- S.B.
+        Do the same for every chart we make
+        Chart ideas
+
+MVP Frontend:
+    Landing Page
+    about page
+    strategies page (show our charts and analysis from the mvp)
+
+DATABASE:
+    Repopulate DB
+    Create a DB table for company profiles
+    Add more columns and stuff after mvp for the sake of ml analysis
 
 
 Deployment
