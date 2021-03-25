@@ -52,7 +52,7 @@ Prototyping our MVP locally
         parseData.. function: Clean and simplify api-key selection 
         encounteredError function: separate the "Note" handle into it's own function
     
-    Change SandP500 csv - change ticker for BF.B to BF-B
+    ### Change SandP500 csv - change ticker for BF.B to BF-B
 
     move the `populateDB()` to the if __name__ = "main"???
 

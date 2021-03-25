@@ -78,10 +78,10 @@ def parseDataFromAlphaVAPI():
   for symbol in trimmedSP500["Symbol"][:]:
 
     logKey = 0
-    if (i <= 60) or (i >= 121 and i <= 180) or (i >= 241 and i <= 300) or (i >= 421 and i <= 480):
+    if i <= 250:
       APIKEY = os.getenv("APIKEY1")
       logKey = 1
-    elif (i >= 61 and i <= 120) or (i >= 181 and i <= 240) or (i >= 361 and i <= 420) or (i >= 481):
+    else:
       APIKEY = os.getenv("APIKEY2")
       logKey = 2
 
@@ -94,16 +94,16 @@ def parseDataFromAlphaVAPI():
 
     parsed_divs = json.loads(requests.get(div_monthly_summary).text) 
 
+    if exceededAPIcallRate(parsed_divs):
+      print("THROTTLED!")
+      sleep(65)
+      continue
+
     if encounteredError(parsed_divs):
       i += 1
       continue
     
     
-    
-    ### make a row for each date in the 'Monthly Adjusted Time Series' with the
-    ### dividend amount as the entry
-    """div_dates = list(parsed_divs.items())
-    date_cols = list(div_dates[1][1].keys())"""
 
     monthly_time_series_df = pd.DataFrame.from_dict(parsed_divs['Monthly Adjusted Time Series'], orient ='index')
     monthly_time_series_df['Company_Ticker'] = symbol
@@ -113,7 +113,7 @@ def parseDataFromAlphaVAPI():
     monthly_time_series_df.reset_index(drop=True, inplace=True)
     print(monthly_time_series_df.head(3))
     
-    allCompany_df = pd.concat([allCompany_df, monthly_time_series_df]) #
+    allCompany_df = pd.concat([allCompany_df, monthly_time_series_df])
 
 
     
@@ -138,13 +138,10 @@ def dbExists():
     for row in result:
         return row[0]==1
   
-  
-def encounteredError(parsedDivs):
-  if 'Note' in parsedDivs:
-    print("THROTTLED!")
-    sleep(65)
-    return False
+def exceededAPIcallRate(parsedDivs):
+  return 'Note' in parsedDivs
 
+def encounteredError(parsedDivs):
   if 'Error Message' in parsedDivs:
     print("ERROR MESSAGE")
     return True
