@@ -56,13 +56,18 @@ Prototyping our MVP locally
 
     move the `populateDB()` to the if __name__ = "main"???
     
-    Change column names in parse function
+    # Change column names in parse function
+
+    change column datatypes in db(at import)
 
     Add the chron so that it automatically updates the database monthly
 
     write the queries -- E.G.
-        wants to easily find out which stocks pay dividends, in order to make a good decision about investing
+        # wants to easily find out which stocks pay dividends, in order to make a good decision about investing
         query that returns the DIVIDEND YIELD
+        query all companies, avg price closing price per year, dividend
+        
+        
 
 ANALYSIS
     Put into a pandas dataframe Plot the results of the above query --E.G. with some Pair Programming
