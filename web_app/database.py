@@ -68,7 +68,8 @@ def parseDataFromAlphaVAPI():
 
   allCompany_df = pd.DataFrame([[0, 0, 0, 0,0,0, 0, "0", "0", 0, 0]],
                                 columns=['open', 'high', 'low', 'close', 'adjusted_close',
-                                          'volume', 'dividend_amount', 'Company_Ticker', 'Company_Name', 'month', 'year'])
+                                          'volume', 'dividend_amount', 'Company_Ticker', 
+                                          'Company_Name', 'month', 'year'])
 
   i = 0
   startDFIndex = 1
@@ -78,7 +79,11 @@ def parseDataFromAlphaVAPI():
   for symbol in trimmedSP500["Symbol"][:]:
 
     logKey = 0
-    if i <= 250:
+    if i <=175:
+      APIKEY = "abc123"
+      logKey = 0
+
+    elif i > 175 and i <350:
       APIKEY = os.getenv("APIKEY1")
       logKey = 1
     else:
@@ -104,7 +109,7 @@ def parseDataFromAlphaVAPI():
       continue
     
     
-
+    
     monthly_time_series_df = pd.DataFrame.from_dict(parsed_divs['Monthly Adjusted Time Series'], orient ='index')
     monthly_time_series_df = monthly_time_series_df.rename(columns={'1. open':'open',
                                                                     '2. high': 'high',
@@ -113,8 +118,7 @@ def parseDataFromAlphaVAPI():
                                                                     '5. adjusted close': 'adjusted_close',
                                                                     '6. volume': 'volume',
                                                                     '7. dividend amount': 'dividend_amount'})
-
-
+    
     monthly_time_series_df['Company_Ticker'] = symbol
     monthly_time_series_df['Company_Name'] = trimmedSP500['Security'][i]
     monthly_time_series_df['month'] = pd.DatetimeIndex(monthly_time_series_df.index).month
@@ -148,11 +152,14 @@ def dbExists():
         return row[0]==1
   
 def exceededAPIcallRate(parsedDivs):
+  if 'Information' in parsedDivs:
+    print(parsedDivs['Information'])
+    return True
   return 'Note' in parsedDivs
 
 def encounteredError(parsedDivs):
   if 'Error Message' in parsedDivs:
-    print("ERROR MESSAGE")
+    print(parsedDivs['Error Message'])
     return True
 
   return False
