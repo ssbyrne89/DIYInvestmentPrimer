@@ -55,18 +55,18 @@ Prototyping our MVP locally
     ### Change SandP500 csv - change ticker for BF.B to BF-B
 
     # Change column names in parse function
-    
+
     move the `populateDB()` to the if __name__ = "main"???
     
 
-    change column datatypes in db(at import)
+    # change column datatypes in db(at import)
 
     Add the chron so that it automatically updates the database monthly
 
     write the queries -- E.G.
         # wants to easily find out which stocks pay dividends, in order to make a good decision about investing
         query that returns the DIVIDEND YIELD
-        query all companies, avg price closing price per year, dividend
+        # query all companies, avg price closing price per year, dividend
         
         
 

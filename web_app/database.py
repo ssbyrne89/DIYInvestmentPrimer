@@ -86,7 +86,7 @@ def parseDataFromAlphaVAPI():
   
   #for symbol in chunker(lstOFa, 1):
 
-  for symbol in trimmedSP500["Symbol"][:3]:
+  for symbol in trimmedSP500["Symbol"][:]:
 
     logKey = 0
     if i <=175:
@@ -144,7 +144,7 @@ def parseDataFromAlphaVAPI():
     if x == 0:
       appendDFtoDB(allCompany_df[startDFIndex:])
       startDFIndex = allCompany_df.shape[0]
-      sleep(65)
+      sleep(61)
     i += 1
       
 
