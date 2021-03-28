@@ -1,9 +1,11 @@
 from sqlalchemy import create_engine
+from sqlalchemy.types import Float, Integer
 # from web_app.__init__ import DATABASE_URI
 import pandas as pd
 import json
 import requests
 import os
+
 
 from datetime import datetime
 
@@ -57,8 +59,16 @@ def appendDFtoDB(df):
 
   sqlite_table = "month_summary"
   with engine.connect() as sqlite_connection:
-    df.to_sql(sqlite_table,sqlite_connection, if_exists='append')
-  
+    df.to_sql(sqlite_table,sqlite_connection, if_exists='append',
+              dtype={"open": Float(),
+                    "high": Float(),
+                    "low": Float(),
+                    "close": Float(),
+                    "adjusted_close": Float(),
+                    "volume": Integer(),
+                    "dividend_amount": Float(),
+                      })
+    
 
 def parseDataFromAlphaVAPI():
 
@@ -76,7 +86,7 @@ def parseDataFromAlphaVAPI():
   
   #for symbol in chunker(lstOFa, 1):
 
-  for symbol in trimmedSP500["Symbol"][:]:
+  for symbol in trimmedSP500["Symbol"][:3]:
 
     logKey = 0
     if i <=175:

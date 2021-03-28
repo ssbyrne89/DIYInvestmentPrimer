@@ -54,9 +54,10 @@ Prototyping our MVP locally
     
     ### Change SandP500 csv - change ticker for BF.B to BF-B
 
+    # Change column names in parse function
+    
     move the `populateDB()` to the if __name__ = "main"???
     
-    # Change column names in parse function
 
     change column datatypes in db(at import)
 
