@@ -1,9 +1,11 @@
 from sqlalchemy import create_engine
+from sqlalchemy.types import Float, Integer
 # from web_app.__init__ import DATABASE_URI
 import pandas as pd
 import json
 import requests
 import os
+
 
 from datetime import datetime
 
@@ -46,9 +48,9 @@ def logAPICall(symbol, date, logKey):
 
 def populateDB():
 
-  if dbExists():
-    print("monthly dividend summary already exists!")
-    return
+  # if dbExists():
+  #   print("monthly dividend summary already exists!")
+  #   return
 
   parseDataFromAlphaVAPI()
   
@@ -57,8 +59,16 @@ def appendDFtoDB(df):
 
   sqlite_table = "month_summary"
   with engine.connect() as sqlite_connection:
-    df.to_sql(sqlite_table,sqlite_connection, if_exists='append')
-  
+    df.to_sql(sqlite_table,sqlite_connection, if_exists='append',
+              dtype={"open": Float(),
+                    "high": Float(),
+                    "low": Float(),
+                    "close": Float(),
+                    "adjusted_close": Float(),
+                    "volume": Integer(),
+                    "dividend_amount": Float(),
+                      })
+    
 
 def parseDataFromAlphaVAPI():
 
@@ -71,12 +81,12 @@ def parseDataFromAlphaVAPI():
                                           'volume', 'dividend_amount', 'Company_Ticker', 
                                           'Company_Name', 'month', 'year'])
 
-  i = 0
+  i = 486
   startDFIndex = 1
   
   #for symbol in chunker(lstOFa, 1):
 
-  for symbol in trimmedSP500["Symbol"][:]:
+  for symbol in trimmedSP500["Symbol"][486:]:
 
     logKey = 0
     if i <=175:
@@ -134,7 +144,7 @@ def parseDataFromAlphaVAPI():
     if x == 0:
       appendDFtoDB(allCompany_df[startDFIndex:])
       startDFIndex = allCompany_df.shape[0]
-      sleep(65)
+      sleep(61)
     i += 1
       
 

@@ -13,6 +13,7 @@ from web_app.database import DATABASE_URI, parseDataFromAlphaVAPI, populateDB, \
 from sqlalchemy import create_engine
 
 
+createAPICallTable()
 
 # DATABASE_URI = "sqlite:///DIY_Investment_Primer_dev_DB.db" # using relative filepath
 #DATABASE_URI = "sqlite:////Users/Username/Desktop/your-repo-name/web_app_99.db" # using absolute filepath on Mac (recommended)
@@ -32,7 +33,6 @@ def create_app():
 
     
     populateDB()
-    createAPICallTable()
     
     app.register_blueprint(home_routes)
     app.register_blueprint(company_routes)
