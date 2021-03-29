@@ -48,9 +48,9 @@ def logAPICall(symbol, date, logKey):
 
 def populateDB():
 
-  if dbExists():
-    print("monthly dividend summary already exists!")
-    return
+  # if dbExists():
+  #   print("monthly dividend summary already exists!")
+  #   return
 
   parseDataFromAlphaVAPI()
   
@@ -81,12 +81,12 @@ def parseDataFromAlphaVAPI():
                                           'volume', 'dividend_amount', 'Company_Ticker', 
                                           'Company_Name', 'month', 'year'])
 
-  i = 0
+  i = 486
   startDFIndex = 1
   
   #for symbol in chunker(lstOFa, 1):
 
-  for symbol in trimmedSP500["Symbol"][:]:
+  for symbol in trimmedSP500["Symbol"][486:]:
 
     logKey = 0
     if i <=175:
