@@ -56,10 +56,20 @@ Prototyping our MVP locally
 
     # Change column names in parse function
 
+    # change column datatypes in db(at import)
+
     move the `populateDB()` to the if __name__ = "main"???
     
+    
+    MVP milestones schedule -- as of 3/30/21
+        -two charts -- one day each
+        -query -- one day
+        -chron function -- today
+        -frontend -- three days
+        -write-up --one day
+        -DB stuff --two days
+        
 
-    # change column datatypes in db(at import)
 
     Add the chron so that it automatically updates the database monthly
 
@@ -68,14 +78,15 @@ Prototyping our MVP locally
         query that returns the DIVIDEND YIELD
         # query all companies, avg price closing price per year, dividend
         
-        
+
+
 
 ANALYSIS
     Put into a pandas dataframe Plot the results of the above query --E.G. with some Pair Programming
 
     Create create visualization:
-        DIVIDEND YIELD chart
-        "top 20 companies with best dividend yield" CHART NAME
+        a graph of top X comparing absolute payout
+        "top X companies comparing their average dividend yield for the whole time frame" CHART NAME
 
 
 FRONTEND
