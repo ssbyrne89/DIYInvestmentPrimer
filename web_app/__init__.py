@@ -7,7 +7,7 @@ from web_app.routes.home_routes import home_routes
 from web_app.routes.company_routes import company_routes
 
 from web_app.database import DATABASE_URI, parseDataFromAlphaVAPI, populateDB, \
-                            createAPICallTable
+                            createAPICallTable, updateDatabase
                                 
 
 from sqlalchemy import create_engine
@@ -33,6 +33,7 @@ def create_app():
 
     
     populateDB()
+    updateDatabase() # will get moved when we update
     
     app.register_blueprint(home_routes)
     app.register_blueprint(company_routes)
