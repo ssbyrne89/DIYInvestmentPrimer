@@ -73,7 +73,7 @@ def initializeMonthlySummaryDF():
 
   SandP500 = pd.read_csv('../DIYInvestmentPrimer/SandP_500_companies.csv')
   # trimmedSP500 = SandP500[['Symbol', 'Security', 'Date first added']]
-
+  
   allCompany_df = pd.DataFrame([[0, 0, 0, 0,0,0, 0, "0", "0", 0, 0]],
                                 columns=['open', 'high', 'low', 'close', 'adjusted_close',
                                           'volume', 'dividend_amount', 'Company_Ticker', 
@@ -82,25 +82,26 @@ def initializeMonthlySummaryDF():
 
 def parseSingleCallFromAlphaVAPI(symbol, logKey):
 
-  if logKey = 0:
+  
+  if logKey == 0:
     APIKEY = "abc123"
 
-  elif logKey = 1:
+  elif logKey == 1:
     APIKEY = os.getenv("APIKEY1")
     
   else:
     APIKEY = os.getenv("APIKEY2")
       
   div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
-
+  
   logAPICall(symbol, datetime.now(), logKey)
 
   parsedCompanyRecord = json.loads(requests.get(div_monthly_summary).text)
 
   return parsedCompanyRecord
 
-def companyRecordToDf(parsedCoRecord):
-  
+def companyRecordToDf(parsedCoRecord, companyName, symbol):
+
     currentCompany_df = pd.DataFrame.from_dict(parsedCoRecord['Monthly Adjusted Time Series'], orient ='index')
     currentCompany_df = currentCompany_df.rename(columns={'1. open':'open',
                                                                     '2. high': 'high',
@@ -111,14 +112,14 @@ def companyRecordToDf(parsedCoRecord):
                                                                     '7. dividend amount': 'dividend_amount'})
     
     currentCompany_df['Company_Ticker'] = symbol
-    currentCompany_df['Company_Name'] = SandP500['Security'][i]
+    currentCompany_df['Company_Name'] = companyName
     currentCompany_df['month'] = pd.DatetimeIndex(currentCompany_df.index).month
     currentCompany_df['year'] = pd.DatetimeIndex(currentCompany_df.index).year
     currentCompany_df.reset_index(drop=True, inplace=True)
     
     return currentCompany_df
   
-def parseDataFromAlphaVAPI():
+def parseDataFromAlphaVAPI(): # change name
 
   # This function initializes the db. it runs only once!
   
@@ -129,9 +130,11 @@ def parseDataFromAlphaVAPI():
   
   #for symbol in chunker(lstOFa, 1):
 
+
+
   for symbol in SandP500["Symbol"][:]:
 
-    parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, 0) # temp hired log key
+    parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, selectLogKey(i)) # temp hired log key
     # logKey = 0
     # if i <=175:
     #   APIKEY = "abc123"
@@ -162,22 +165,10 @@ def parseDataFromAlphaVAPI():
       i += 1
       continue
     
-    currentCompany_df = companyRecordToDf(parsedCompanyRecord)
+
+    currentCompany_df = companyRecordToDf(parsedCompanyRecord, SandP500, symbol)
     
-    # currentCompany_df = pd.DataFrame.from_dict(parsedCompanyRecord['Monthly Adjusted Time Series'], orient ='index')
-    # currentCompany_df = currentCompany_df.rename(columns={'1. open':'open',
-    #                                                                 '2. high': 'high',
-    #                                                                 '3. low': 'low',
-    #                                                                 '4. close': 'close',
-    #                                                                 '5. adjusted close': 'adjusted_close',
-    #                                                                 '6. volume': 'volume',
-    #                                                                 '7. dividend amount': 'dividend_amount'})
-    
-    # currentCompany_df['Company_Ticker'] = symbol
-    # currentCompany_df['Company_Name'] = SandP500['Security'][i]
-    # currentCompany_df['month'] = pd.DatetimeIndex(currentCompany_df.index).month
-    # currentCompany_df['year'] = pd.DatetimeIndex(currentCompany_df.index).year
-    # currentCompany_df.reset_index(drop=True, inplace=True)
+   
     print(currentCompany_df.head(3))
     
     allCompany_df = pd.concat([allCompany_df, currentCompany_df])
@@ -220,28 +211,47 @@ def encounteredError(parsedDivs):
 
 def updateDatabase():
   # this function does a monthly update of the db
-
   # On the 5th of the month, 
-
-  if datetime.day == 5:
-
-    # make api call to Alphavantage for the last month 
+  
+  if datetime.today().day == 5:
     allCompany_df, SandP500 = initializeMonthlySummaryDF()
-
+    i = 0
     for symbol in SandP500["Symbol"][:]:
 
-      parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, 0)
+      companyName_con = SandP500.loc[:]['Symbol'] == symbol
+      companyName = SandP500[companyName_con]["Security"][i]
+
+      
+      parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, selectLogKey(i))
 
       #TODO: Error check here
 
-      currentCompany_df = companyRecordToDf(parsedCompanyRecord)
-      currentMonth_con = currentCompany_df['month'] == datetime.month - 1
+      currentCompany_df = companyRecordToDf(parsedCompanyRecord, companyName, symbol)
+
+      # this condition doesn't work on Jan of the year (to update Dec of the previous year)
+      currentMonth_con = (currentCompany_df['month'] == datetime.today().month) & (currentCompany_df['year'] == datetime.today().year)
+
       currentCompany_df = currentCompany_df[currentMonth_con]
     
       appendDFtoDB(currentCompany_df)
 
-  # save results in df
-  # append df to db(monthly_summary table)
+      x = i % 5
+      if x == 0:
+        sleep(61)
+      i += 1
+
+def selectLogKey(symbolIndex):
+  
+  logKey = 0
+  if symbolIndex <=175:
+    logKey = 0
+  elif symbolIndex > 175 and symbolIndex <350:
+    logKey = 1
+  else:
+    logKey = 2
+  
+  return logKey
 
 
-  pass
+
+  
