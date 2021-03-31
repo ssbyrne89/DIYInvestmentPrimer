@@ -57,6 +57,7 @@ def populateDB():
 
 def appendDFtoDB(df):
 
+  print(df.head(3))
   sqlite_table = "month_summary"
   with engine.connect() as sqlite_connection:
     df.to_sql(sqlite_table,sqlite_connection, if_exists='append',
@@ -112,6 +113,8 @@ def companyRecordToDf(parsedCoRecord, companyName, symbol):
                                                                     '7. dividend amount': 'dividend_amount'})
     
     currentCompany_df['Company_Ticker'] = symbol
+    
+    
     currentCompany_df['Company_Name'] = companyName
     currentCompany_df['month'] = pd.DatetimeIndex(currentCompany_df.index).month
     currentCompany_df['year'] = pd.DatetimeIndex(currentCompany_df.index).year
@@ -135,26 +138,7 @@ def parseDataFromAlphaVAPI(): # change name
   for symbol in SandP500["Symbol"][:]:
 
     parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, selectLogKey(i)) # temp hired log key
-    # logKey = 0
-    # if i <=175:
-    #   APIKEY = "abc123"
-    #   logKey = 0
-
-    # elif i > 175 and i <350:
-    #   APIKEY = os.getenv("APIKEY1")
-    #   logKey = 1
-    # else:
-    #   APIKEY = os.getenv("APIKEY2")
-    #   logKey = 2
-
-    # div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
-    # # div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
-
-    # logAPICall(symbol, datetime.now(), logKey)
-
-
-
-    # parsed_divs = json.loads(requests.get(div_monthly_summary).text) 
+    
 
     if exceededAPIcallRate(parsedCompanyRecord):
       print("THROTTLED!")
@@ -165,11 +149,12 @@ def parseDataFromAlphaVAPI(): # change name
       i += 1
       continue
     
-
-    currentCompany_df = companyRecordToDf(parsedCompanyRecord, SandP500, symbol)
+    companyName_con = SandP500.loc[:]['Symbol'] == symbol
+    companyName = SandP500[companyName_con]["Security"][i]
+    currentCompany_df = companyRecordToDf(parsedCompanyRecord, companyName, symbol)
     
    
-    print(currentCompany_df.head(3))
+    # print(currentCompany_df.head(3))
     
     allCompany_df = pd.concat([allCompany_df, currentCompany_df])
 
@@ -220,19 +205,19 @@ def updateDatabase():
 
       companyName_con = SandP500.loc[:]['Symbol'] == symbol
       companyName = SandP500[companyName_con]["Security"][i]
-
-      
+     
       parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, selectLogKey(i))
 
       #TODO: Error check here
-
+      
       currentCompany_df = companyRecordToDf(parsedCompanyRecord, companyName, symbol)
 
       # this condition doesn't work on Jan of the year (to update Dec of the previous year)
       currentMonth_con = (currentCompany_df['month'] == datetime.today().month) & (currentCompany_df['year'] == datetime.today().year)
 
       currentCompany_df = currentCompany_df[currentMonth_con]
-    
+
+      # print(currentCompany_df.head())
       appendDFtoDB(currentCompany_df)
 
       x = i % 5
