@@ -45,14 +45,6 @@ def createAPICallTable():
 def logAPICall(symbol, date, logKey):
   with engine2.connect() as conn:
     conn.execute(INSERT_API_CALL, symbol, date, logKey)
-
-def populateDB():
-
-  if dbExists():
-    print("monthly dividend summary already exists!")
-    return
-
-  parseDataFromAlphaVAPI()
   
 
 def appendDFtoDB(df):
@@ -122,7 +114,7 @@ def companyRecordToDf(parsedCoRecord, companyName, symbol):
     
     return currentCompany_df
   
-def parseDataFromAlphaVAPI(): # change name
+def populateDB(): # change name
 
   # This function initializes the db. it runs only once!
   

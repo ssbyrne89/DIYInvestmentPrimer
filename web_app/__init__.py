@@ -6,8 +6,8 @@ from web_app.models import db, migrate
 from web_app.routes.home_routes import home_routes
 from web_app.routes.company_routes import company_routes
 
-from web_app.database import DATABASE_URI, parseDataFromAlphaVAPI, populateDB, \
-                            createAPICallTable, updateDatabase
+from web_app.database import DATABASE_URI, populateDB, \
+                            createAPICallTable, updateDatabase, dbExists
                                 
 
 from sqlalchemy import create_engine
@@ -31,8 +31,11 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
-    
-    populateDB()
+    if not dbExists():
+        populateDB()
+    else:
+        print("monthly dividend summary already exists!")
+
     updateDatabase() # will get moved when we update
     
     app.register_blueprint(home_routes)
