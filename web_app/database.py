@@ -22,7 +22,6 @@ sqlite_connection = engine.connect()
 API_META_DATABASE_URI = "sqlite:///AlphaVApi_meta_DB.db"
 engine2 = create_engine(API_META_DATABASE_URI, echo=False)
 
-
 CREATE_API_META_TABLE = """
 CREATE TABLE IF NOT EXISTS api_call(
     id INTEGER PRIMARY KEY,
@@ -42,21 +41,14 @@ def createAPICallTable():
   with engine2.connect() as conn:
     conn.execute(CREATE_API_META_TABLE)
 
+
 def logAPICall(symbol, date, logKey):
   with engine2.connect() as conn:
     conn.execute(INSERT_API_CALL, symbol, date, logKey)
-
-def populateDB():
-
-  if dbExists():
-    print("monthly dividend summary already exists!")
-    return
-
-  parseDataFromAlphaVAPI()
   
 
 def appendDFtoDB(df):
-
+  print(df.head(3))
   sqlite_table = "month_summary"
   with engine.connect() as sqlite_connection:
     df.to_sql(sqlite_table,sqlite_connection, if_exists='append',
@@ -80,15 +72,13 @@ def initializeMonthlySummaryDF():
                                           'Company_Name', 'month', 'year'])
   return (allCompany_df, SandP500)
 
+
 def parseSingleCallFromAlphaVAPI(symbol, logKey):
 
-  
   if logKey == 0:
     APIKEY = "abc123"
-
   elif logKey == 1:
     APIKEY = os.getenv("APIKEY1")
-    
   else:
     APIKEY = os.getenv("APIKEY2")
       
@@ -100,62 +90,52 @@ def parseSingleCallFromAlphaVAPI(symbol, logKey):
 
   return parsedCompanyRecord
 
+
 def companyRecordToDf(parsedCoRecord, companyName, symbol):
 
     currentCompany_df = pd.DataFrame.from_dict(parsedCoRecord['Monthly Adjusted Time Series'], orient ='index')
     currentCompany_df = currentCompany_df.rename(columns={'1. open':'open',
-                                                                    '2. high': 'high',
-                                                                    '3. low': 'low',
-                                                                    '4. close': 'close',
-                                                                    '5. adjusted close': 'adjusted_close',
-                                                                    '6. volume': 'volume',
-                                                                    '7. dividend amount': 'dividend_amount'})
+                                                          '2. high': 'high',
+                                                          '3. low': 'low',
+                                                          '4. close': 'close',
+                                                          '5. adjusted close': 'adjusted_close',
+                                                          '6. volume': 'volume',
+                                                          '7. dividend amount': 'dividend_amount'})
     
     currentCompany_df['Company_Ticker'] = symbol
+    
+    
     currentCompany_df['Company_Name'] = companyName
     currentCompany_df['month'] = pd.DatetimeIndex(currentCompany_df.index).month
     currentCompany_df['year'] = pd.DatetimeIndex(currentCompany_df.index).year
     currentCompany_df.reset_index(drop=True, inplace=True)
     
     return currentCompany_df
-  
-def parseDataFromAlphaVAPI(): # change name
 
-  # This function initializes the db. it runs only once!
-  
+def getCurrentCompanyDf(companyRecord, currentSymbol, currentIndex):
+
   allCompany_df, SandP500 = initializeMonthlySummaryDF()
 
-  i = 0
+  companyName_con = SandP500.loc[:]['Symbol'] == currentSymbol
+  companyName = SandP500[companyName_con]["Security"][currentIndex]
+
+  return companyRecordToDf(companyRecord, companyName, currentSymbol)
+
+
+def populateDB(): # change name
+
+  # This function initializes the db. it runs only once!
+
   startDFIndex = 1
   
-  #for symbol in chunker(lstOFa, 1):
-
-
+  allCompany_df, SandP500 = initializeMonthlySummaryDF()
+  i = 0
 
   for symbol in SandP500["Symbol"][:]:
 
-    parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, selectLogKey(i)) # temp hired log key
-    # logKey = 0
-    # if i <=175:
-    #   APIKEY = "abc123"
-    #   logKey = 0
-
-    # elif i > 175 and i <350:
-    #   APIKEY = os.getenv("APIKEY1")
-    #   logKey = 1
-    # else:
-    #   APIKEY = os.getenv("APIKEY2")
-    #   logKey = 2
-
-    # div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
-    # # div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey=abc123"
-
-    # logAPICall(symbol, datetime.now(), logKey)
-
-
-
-    # parsed_divs = json.loads(requests.get(div_monthly_summary).text) 
-
+    parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, selectLogKey(i)) 
+    
+    # Refactor Duplication
     if exceededAPIcallRate(parsedCompanyRecord):
       print("THROTTLED!")
       sleep(65)
@@ -165,14 +145,9 @@ def parseDataFromAlphaVAPI(): # change name
       i += 1
       continue
     
-
-    currentCompany_df = companyRecordToDf(parsedCompanyRecord, SandP500, symbol)
-    
-   
-    print(currentCompany_df.head(3))
+    currentCompany_df = getCurrentCompanyDf(parsedCompanyRecord, symbol, i)
     
     allCompany_df = pd.concat([allCompany_df, currentCompany_df])
-
 
     # Append df to 
     x = i % 5
@@ -182,11 +157,9 @@ def parseDataFromAlphaVAPI(): # change name
       sleep(61)
     i += 1
       
-
   appendDFtoDB(allCompany_df[startDFIndex:])
 
 def dbExists():
-
   with engine.connect() as sqlite_connection:
     result = sqlite_connection.execute(''' 
     SELECT count(name) 
@@ -196,11 +169,13 @@ def dbExists():
     for row in result:
         return row[0]==1
   
+
 def exceededAPIcallRate(parsedDivs):
   if 'Information' in parsedDivs:
     print(parsedDivs['Information'])
     return True
   return 'Note' in parsedDivs
+
 
 def encounteredError(parsedDivs):
   if 'Error Message' in parsedDivs:
@@ -209,30 +184,39 @@ def encounteredError(parsedDivs):
 
   return False
 
+
 def updateDatabase():
   # this function does a monthly update of the db
   # On the 5th of the month, 
   
   if datetime.today().day == 5:
+
     allCompany_df, SandP500 = initializeMonthlySummaryDF()
     i = 0
+
     for symbol in SandP500["Symbol"][:]:
 
-      companyName_con = SandP500.loc[:]['Symbol'] == symbol
-      companyName = SandP500[companyName_con]["Security"][i]
-
-      
       parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, selectLogKey(i))
 
-      #TODO: Error check here
+      #TODO: Refactor Duplication
+      if exceededAPIcallRate(parsedCompanyRecord):
+        print("THROTTLED!")
+        sleep(65)
+        continue
 
-      currentCompany_df = companyRecordToDf(parsedCompanyRecord, companyName, symbol)
+      if encounteredError(parsedCompanyRecord):
+        i += 1
+        continue
+
+      currentCompany_df = getCurrentCompanyDf(parsedCompanyRecord, symbol, i)
+
 
       # this condition doesn't work on Jan of the year (to update Dec of the previous year)
       currentMonth_con = (currentCompany_df['month'] == datetime.today().month) & (currentCompany_df['year'] == datetime.today().year)
 
       currentCompany_df = currentCompany_df[currentMonth_con]
-    
+
+      # print(currentCompany_df.head())
       appendDFtoDB(currentCompany_df)
 
       x = i % 5
