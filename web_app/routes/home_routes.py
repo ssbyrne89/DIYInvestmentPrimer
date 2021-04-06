@@ -13,6 +13,10 @@ home_routes = Blueprint("home_routes", __name__)
 def index():
     return render_template("dividend_companies.html")
 
+@home_routes.route("/div_yield")
+def seeDivYield():
+    return render_template("chartGroup01.html")
+
 @home_routes.route("/about")
 def about():
     print("VISITING THE ABOUT PAGE")
