@@ -27,14 +27,19 @@ CREATE TABLE IF NOT EXISTS api_call(
     id INTEGER PRIMARY KEY,
     company TEXT,
     api_key_id INTEGER,
+    service_company TEXT,
+    service_call TEXT,
     date REAL
 );
 """
 
 INSERT_API_CALL = """
-INSERT INTO api_call (company, date, api_key_id)
-VALUES (?,?, ?);
+INSERT INTO api_call (company, date, api_key_id, service_company, service_call)
+VALUES (?,?,?, ?, ?);
 """
+
+
+
 
 
 def createAPICallTable():
@@ -42,9 +47,9 @@ def createAPICallTable():
     conn.execute(CREATE_API_META_TABLE)
 
 
-def logAPICall(symbol, date, logKey):
+def logAPICall(symbol, date, logKey, company, service):
   with engine2.connect() as conn:
-    conn.execute(INSERT_API_CALL, symbol, date, logKey)
+    conn.execute(INSERT_API_CALL, symbol, date, logKey, company, service)
   
 
 def appendDFtoDB(df):
@@ -77,16 +82,25 @@ def parseSingleCallFromAlphaVAPI(symbol, logKey):
 
   if logKey == 0:
     APIKEY = "abc123"
+#     user_agent_mac_desktop = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) '\
+# 'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1.2 Safari/605.1.15'
+
+#     headers = { 'User-Agent': user_agent_mac_desktop}
+
   elif logKey == 1:
     APIKEY = os.getenv("APIKEY1")
+    # test_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36'
+    # headers = { 'User-Agent': test_agent}
   else:
     APIKEY = os.getenv("APIKEY2")
-      
+    # test_agent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
+    # headers = { 'User-Agent': test_agent}
+
   div_monthly_summary = f"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={symbol}&apikey={APIKEY}"
   
-  logAPICall(symbol, datetime.now(), logKey)
+  logAPICall(symbol, datetime.now(), logKey, "ALPHA VANTAGE", "TIME_SERIES_MONTHLY_ADJUSTED")
 
-  parsedCompanyRecord = json.loads(requests.get(div_monthly_summary).text)
+  parsedCompanyRecord = json.loads(requests.get(div_monthly_summary ).text) # headers=headers
 
   return parsedCompanyRecord
 
@@ -133,7 +147,7 @@ def populateDB(): # change name
 
   for symbol in SandP500["Symbol"][:]:
 
-    parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, selectLogKey(i)) 
+    parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, i%3) 
     
     # Refactor Duplication
     if exceededAPIcallRate(parsedCompanyRecord):
@@ -174,6 +188,9 @@ def exceededAPIcallRate(parsedDivs):
   if 'Information' in parsedDivs:
     print(parsedDivs['Information'])
     return True
+  if 'Note' in parsedDivs:
+    print(parsedDivs['Note'])
+    return True
   return 'Note' in parsedDivs
 
 
@@ -196,7 +213,7 @@ def updateDatabase():
 
     for symbol in SandP500["Symbol"][:]:
 
-      parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, selectLogKey(i))
+      parsedCompanyRecord = parseSingleCallFromAlphaVAPI(symbol, i%3)
 
       #TODO: Refactor Duplication
       if exceededAPIcallRate(parsedCompanyRecord):
@@ -237,5 +254,12 @@ def selectLogKey(symbolIndex):
   return logKey
 
 
+# create a list of logKey
+# iterate through list 5 times 
+# pause for 61 secs
+# def newSelectLogKey():
+#   keyList = [0, 1, 2]
+
+#   for key in keyList:
 
   

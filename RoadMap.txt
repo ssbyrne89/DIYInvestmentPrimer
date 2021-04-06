@@ -99,6 +99,11 @@ MVP Frontend:
     about page
     strategies page (show our charts and analysis from the mvp)
 
+    Components - chart group 1 (Dividend Paying Companys with most growth;)
+                chart group 2(Highest Avg Div yield)
+                Chart Group 3(20 most affordable companies w/ highiest Div yield)
+                intro paragraph 
+
 DATABASE:
     Repopulate DB
     Create a DB table for company profiles
