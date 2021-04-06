@@ -8,15 +8,17 @@
 </head> -->
 
 {% extends "basic.html" %} 
+<div class = "container">
 {% block content %}   
-    <h1>Dividend Paying Companies</h1>
-
-    <p>Welcome. Please enjoy the following table of dividend paying stocks for your reference</p>
-
-    <ul>
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
-    </ul>
-
-{% endblock %}
+    <div class= "container">
+        <h1>Dividend Paying Companies</h1>
+    </div>
+        <p>Welcome. Please enjoy the following table of dividend paying stocks for your reference</p>
+        <div class = "container">
+            <button type="button" class="btn btn-primary">YoY Increase</button>
+            <button type="button" class="btn btn-secondary">Highest AVG Div Yield</button>
+            <button type="button" class="btn btn-success">Most Affordable</button>
+        </div>
+    
+    {% endblock %}
+</div>
