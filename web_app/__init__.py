@@ -1,7 +1,8 @@
 # web_app/__init__.py
 
-from flask import Flask
-
+from flask import Flask, Blueprint, jsonify, request, render_template
+#from flask_nav import Nav
+#from flask_nav.elements import Navbar, Subgroup, View, Link, Text, Separator
 from web_app.models import db
 from web_app.routes.home_routes import home_routes
 from web_app.routes.company_routes import company_routes
@@ -39,7 +40,7 @@ def create_app():
     #    print("monthly dividend summary already exists!")
 
     #updateDatabase() # will get moved when we update
-    
+   
     app.register_blueprint(home_routes)
     app.register_blueprint(company_routes)
     return app

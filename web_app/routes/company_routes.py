@@ -6,12 +6,29 @@ from web_app.models import *
 
 company_routes = Blueprint("company_routes", __name__)
 
+@company_routes.route("/div_yield")
+def seeDivYield():
+    return render_template("highest_DivYield_charts.html")
+
+@company_routes.route("/highest_increasing_divs")
+def seecompanies_w_highest_dividend_increases():
+    return render_template("companies_w_highest_dividend_increases.html")
+
+@company_routes.route("/most_affordable_div_payers")
+def seemost_affordable_div_payers():
+    return render_template("most_affordable.html")
+
 
 
 @company_routes.route("/companies")
 def list_companies_for_humans():
-    return render_template("AllS&P500.html", message="Here's all the companies on the S&P 500",
+    return render_template("All_SP500.html", message="Here's all the companies on the S&P 500",
                             companies=get_AllCompanies())
+
+
+@company_routes.route("/test")
+def seeTEST():
+    return render_template("test.html", message="Here's all the companies on the S&P 500")
 
 def get_AllCompanies():
     all = Company_Info.query.all()
