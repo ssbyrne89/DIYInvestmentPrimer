@@ -32,7 +32,7 @@ def getColoringBook():
     """when tested, this download works with the google chrome
     browser but not with the Brave browser
     """
-    path="templates\static\Sellers_guide_coloring_book.pdf"
+    path=".\static\Sellers_guide_coloring_book.pdf"
     return send_file(path, as_attachment=True,
     attachment_filename="free_real_estate_coloring_book")
 
