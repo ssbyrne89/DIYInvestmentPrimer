@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+"""from sqlalchemy import create_engine
 from sqlalchemy.types import Float, Integer
 # from web_app.__init__ import DATABASE_URI
 import pandas as pd
@@ -23,19 +23,19 @@ API_META_DATABASE_URI = "sqlite:///AlphaVApi_meta_DB.db"
 engine2 = create_engine(API_META_DATABASE_URI, echo=False)
 
 CREATE_API_META_TABLE = """
-CREATE TABLE IF NOT EXISTS api_call(
+"""CREATE TABLE IF NOT EXISTS api_call(
     id INTEGER PRIMARY KEY,
     company TEXT,
     api_key_id INTEGER,
     service_company TEXT,
     service_call TEXT,
     date REAL
-);
+);"""
 """
 
 INSERT_API_CALL = """
-INSERT INTO api_call (company, date, api_key_id, service_company, service_call)
-VALUES (?,?,?, ?, ?);
+"""INSERT INTO api_call (company, date, api_key_id, service_company, service_call)
+VALUES (?,?,?, ?, ?);"""
 """
 
 
