@@ -27,9 +27,9 @@ from sqlalchemy import create_engine
 
 
 def create_app():
-    application = Flask(__name__)
-    app = application
-    
+    application = app = Flask(__name__)
+
+
     app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URI") 
     db.init_app(app)
     #migrate.init_app(app, db)
