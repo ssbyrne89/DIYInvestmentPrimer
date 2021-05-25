@@ -1,28 +1,25 @@
 # web_app/models.py
 
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+
 
 db = SQLAlchemy()
 
-migrate = Migrate()
 
-class Month_Summary(db.Model):
+
+class Company_Info(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    Open_Price = db.Column(db.Float)
-    High = db.Column(db.Float)
-    Low = db.Column(db.Float)
-    Close_Price = db.Column(db.Float)
-    Adjusted_Close = db.Column(db.Float)
-    Volume = db.Column(db.Integer)
-    Dividend_Amount = db.Column(db.Float)
-    Year = db.Column(db.Integer)
-    Month = db.Column(db.Integer)
     Company_Name = db.Column(db.String(128))
     Company_Ticker = db.Column(db.String(128))
+    Sector = db.Column(db.String(128))
+    SubIndustry = db.Column(db.String(128))
+    HQ_Location = db.Column(db.String(128))
+    Date_first_added_to_SP500 = db.Column(db.String(128))
+    Founded = db.Column(db.Integer)
 
-    #def __repr__(self):
-    #    return f"<Book {self.id} {self.title}>"
+
+    def __repr__(self):
+        return f"<Company_Info {self.Company_Ticker} {self.Company_Name}>"
 
 
 
